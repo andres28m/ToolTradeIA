@@ -15,8 +15,6 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-           
-            
         }
         .container {
             width: 90%;
@@ -76,6 +74,12 @@
                 <option value="BTCUSDT">BTC/USDT</option>
                 <option value="ETHUSDT">ETH/USDT</option>
                 <option value="BNBUSDT">BNB/USDT</option>
+                <option value="MKRUSDT">MKR/USDT</option>
+                <option value="TONUSDT">TON/USDT</option>
+                <option value="SOLUSDT">SOL/USDT</option>
+                <option value="AAVEUSDT">AAVE/USDT</option>
+                <option value="LTCUSDT">LTC/USDT</option>
+                <option value="SHIBUSDT">SHIB/USDT</option>
             </select>
             <label for="investment">Inversión Inicial (USD):</label>
             <input type="number" id="investment" value="1000" />
@@ -106,7 +110,7 @@
             }
         }
 
-        function renderPortfolioChart(dates, portfolioValues) {
+        function renderPortfolioChart(dates, portfolioValues, prices) {
             const ctx = document.getElementById('portfolioChart').getContext('2d');
 
             if (portfolioChart) {
@@ -117,12 +121,22 @@
                 type: 'line',
                 data: {
                     labels: dates,
-                    datasets: [{
-                        label: 'Valor de la Cartera',
-                        data: portfolioValues,
-                        borderColor: 'blue',
-                        fill: false
-                    }]
+                    datasets: [
+                        {
+                            label: 'Valor de la Cartera',
+                            data: portfolioValues,
+                            borderColor: 'blue',
+                            fill: false,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Precio de la Moneda',
+                            data: prices,
+                            borderColor: 'green',
+                            fill: false,
+                            yAxisID: 'y1'
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
@@ -141,12 +155,24 @@
                         y: {
                             title: {
                                 display: true,
-                                text: 'Valor (USD)',
+                                text: 'Valor de la Cartera (USD)',
                                 color: '#ffffff'
                             },
                             ticks: {
                                 color: '#ffffff'
-                            }
+                            },
+                            position: 'left'
+                        },
+                        y1: {
+                            title: {
+                                display: true,
+                                text: 'Precio de la Moneda (USD)',
+                                color: '#ffffff'
+                            },
+                            ticks: {
+                                color: '#ffffff'
+                            },
+                            position: 'right'
                         }
                     },
                     plugins: {
@@ -173,10 +199,10 @@
             const dates = binanceData.map(candle => new Date(candle[0]).toLocaleDateString());
             const portfolioValues = prices.map(price => (investment / prices[0]) * price);
 
-            renderPortfolioChart(dates, portfolioValues);
+            renderPortfolioChart(dates, portfolioValues, prices);
 
             const result = document.getElementById('result');
-            result.textContent = `Simulación completa. Valor inicial: $${investment}. Valor actual: $${portfolioValues[portfolioValues.length - 1].toFixed(2)}.`;
+            result.textContent = `Simulación completa. Valor inicial: $${investment}. Valor actual: $${portfolioValues[portfolioValues.length - 1].toFixed(2)}. Precio actual de la moneda: $${prices[prices.length - 1].toFixed(2)}.`;
         }
     </script>
 </body>
